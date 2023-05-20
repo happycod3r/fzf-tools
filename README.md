@@ -1,6 +1,6 @@
 # fzf-tools.zsh
 
-## Table Of Contents
+## [Table Of Contents](#table-of-contents)
 
 - [About](#about)
 - [Usage](#usage)
@@ -18,8 +18,8 @@
 ## [About](#about)
 
 The fzf-tools plugin provides functions, key-bindings, and aliases that aim to integrate **fuzzy finder** capabilities into the command line as a default output for certain commands such as `man`, `ls`, `find`, `printenv`, `alias` and others.
-My aim was to make it so that **fzf** would work without having to manually pipe command through to it, write aliases or explicitly call functions. 
-In other words I wanted to not have to...
+My aim was to make it so that **fzf** would work without having to manually pipe commands through it, write aliases or explicitly call functions. 
+In other words I wanted to avoid doing this:
 
 ```bash
 man -k . | awk '{print $1}' | sort | uniq | fzf | xargs -r man
@@ -32,7 +32,7 @@ alias l="ls --color=auto | fzf"
 alias m="man -k . | awk '{print $1}' | sort | uniq | fzf | xargs -r man"
 ```
 
-There's nothing wrong with doing any of these, but I personally feel that fzf makes life so much easier and is actually such a game changer if you never used it before that it would make a great default out for certain commands such as these. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If 
+There's nothing wrong with doing any of these, but I personally feel that fzf makes life so much easier and is actually such a game changer. If you never used it before it would make a great default feature for certain commands such as these. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If you have suggestions, ideas etc. consult the [Contacts](#contacts) section.
 
 
 ## [Usage](#usage)
@@ -80,7 +80,7 @@ function fzf_run_cmd_from_history() {
  -  The selected command is then stored in the `selected_command` variable.
  - Finally it checks if a command is selected (*i.e., the selected_command variable is not empty*), and if so it is evaluated using eval.
 ---
-Note: *Choosing a previous *cd* command from your history may fail to execute as the `fzf_run_command_from_hisory` function doe's not take into account your current position in the directory stack, so if you aren't in the same position that you were originally in when executing the `cd some-dir` command from your history it will fail giving you the error
+Note: *Choosing a previous *cd* command from your history may fail to execute as the `fzf_run_command_from_hisory` function doesn't take into account your current position in the directory stack, so if you aren't in the same position that you were originally in when executing the `cd some-dir` command from your history it will fail giving you the error
 "cd: no such file or directory: some-dir".*
 
 ------
@@ -93,25 +93,40 @@ Note: *Choosing a previous *cd* command from your history may fail to execute as
 
 ```bash
 function  fzf_command_widget() {
-  local  cmd=${BUFFER%%  *}
-  case  "$cmd"  in
-	ls)
-	  BUFFER="ls --color=auto \
-		| fzf --preview='echo {}' --preview-window down:10%"
-	;;
-	man)
-	  BUFFER="fzf_man"
-	;;
-  esac
-  zle  accept-line
+	local  full_command=$BUFFER
+	case  "$full_command"  in
+		ls*)
+			BUFFER="$full_command | fzf --preview='echo {}' --preview-window right:50%"
+		;;
+		man*)
+			BUFFER="fzf_man $full_command"
+		;;
+		printenv* | env*)
+			BUFFER="$full_command | fzf --preview='echo {}' --preview-window down:10%"
+		;;
+		grep*)
+			BUFFER="$full_command | fzf --preview='echo {}' --preview-window down:10%"
+		;;
+		find*)
+			BUFFER="$full_command | fzf --preview='echo {}' --preview-window down:10%"
+		;;
+	esac
+	zle  accept-line
 }
 ```
 
- -  The `fzf_command_widget` function is defined to handle the behavior when the enter key is pressed. It will extract the first word entered on the command line (`cmd`) using parameter expansion `${BUFFER%% *}`.
- -  The `case` statement checks if the command you entered is either `ls` or `man`.
- -  If the command is `ls`, then the `BUFFER` is modified to `ls --color=auto | fzf`.
- -  If the command is `man`, the `BUFFER` is modified to `fzf_man`.
- -  The `zle accept-line` command accepts the modified command line and executes it.
+The `fzf_command_widget` function is designed to handle the behavior when the enter key is pressed. It takes the entire command line entered by the user and stores it in a variable called `$full_command`. The case statement then checks for different commands and prefixes the existing command with the required options, arguments, and flags, before piping it through `fzf`.
+For example, when the user enters `ls -la /path/to/directory` and presses `Enter(^M)`, the `ls` command with options and arguments will be executed as `ls --color=auto -la /path/to/directory | fzf`.
+Similarly, other commands like `man`, `printenv` (including `env` as an alternative), `grep`, and `find` will be processed with their respective options, arguments, and flags.
+Please keep in mind that this approach will pass the entire command line through fzf, including options, arguments, and flags. However, it does not perform in-depth parsing or validation of the command structure, so the behavior and correctness of the resulting command are dependent on the proper usage of options and arguments. If you're not sure about a commands options and flags you can always consult the man pages. 
+
+ - After the command line is stored in `$full_command` the `case` statement checks if the command you entered is either `ls`, `man`, `printenv`, `env`, `grep` or `find`.
+ - For `ls*`, the `BUFFER` is modified to `$full_command | fzf --preview='echo {}' --preview-window right:50%` which pipes the output of `ls` through `fzf`.
+ - For `man`, the `BUFFER` is modified to `fzf_man $full_command` which is called to pipe the output through `fzf` giving you a list of the manuals to choose from.
+ - For `printenv* | env*`, the `BUFFER` is set to `$full_command | fzf --preview='echo {}' --preview-window down:10%`, which pipes the output of `printenv | env` through `fzf`.
+ - For `grep*`, the `BUFFER` is set to `$full_command | fzf --preview='echo {}' --preview-window down:10%`, which sets up `grep` to search and pipe the output through `fzf`.
+ - For `find*`, the `BUFFER` is set to `$full_command | fzf --preview='echo {}' --preview-window down:10%`, which executes`grep*` and pipes the output through `fzf`.
+ - The `zle accept-line` command accepts the modified command line and executes it.
  
 Next we have to bind the `accept-line` widget function to the `Enter` key:
 
@@ -157,7 +172,7 @@ If you have any feature requests, suggestions or general questions you can reach
 ## [Security](#security)
 ### Reporting a vulnerability or bug?
 
-**Do not submit an issue or pull request**: A general rule of thumb is to never publicly report bugs or vulnerabilities because you might inadvertently reveal it to unethical people who may use it for evil. 
+**Do not submit an issue or pull request**: A general rule of thumb is to never publicly report bugs or vulnerabilities because you might inadvertently reveal it to unethical people who may use it for bad. 
 Instead, you can email me directly at: [**paulmccarthy676@gmail.com**](mailto:paulmccarthy676@gmail.com).
 I will deal with the issue privately and submit a patch as soon as possible.
  
@@ -168,3 +183,5 @@ Author: Paul M.
 - Github: [https://github.com/happycod3r](https://github.com/happycod3r)
 - Linkedin: [https://www.linkedin.com/in/paul-mccarthy-89165a269/](https://www.linkedin.com/in/paul-mccarthy-89165a269/)
 - Facebook: [https://www.facebook.com/paulebeatz](https://www.facebook.com/paulebeatz)
+
+[Back to top](#table-of-contents)
