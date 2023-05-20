@@ -7,9 +7,9 @@
     * oh-my-zsh
     * stand-alone
 - [Documentation](#documentation)
-	* [fzf-run-command-from-history](#fzf-run-command-from-history)
-	* [fzf-command-widget](fzf-command-widget)
-	* [fzf-man](fzf-man)
+	* [fzf_run_command_from_history()](#fzf_run_command_from_history)
+	* [fzf_command_widget()](#fzf_command_widget)
+	* [fzf_man()](#fzf_man)
 - [Contributing](#contributing)
 - [Security](#security)
 - [Contacts](#contacts)
@@ -55,7 +55,7 @@ source a/dir/of/your/choosing/fzf-tools.zsh
 
 ## [Documentation](#documentation)
 
-### [fzf_run_command_from_history](#fzf-run-command-from-history)
+### [fzf_run_command_from_history](#fzf_run_command_from_history)
 >**Allows searching for and executing a command from your command history using fuzzy finder.**
 
 ```bash
@@ -85,7 +85,7 @@ Note: *Choosing a previous *cd* command from your history may fail to execute as
 
 ------
 
-### [fzf_command_widget](fzf-command-widget)
+### [fzf_command_widget](#fzf_command_widget)
 
 >**Defines the 'accept-line' widget function.**
 
@@ -142,7 +142,7 @@ My original approach for detecting specific commands like `ls` and `man` involve
 
 ------
 
-### [fzf_man](#fzf-man)
+### [fzf_man](#fzf_man)
 
 >**The `fzf_man` function is called by the `fzf_command_widget` function when it detects that the user has entered the `man` command.**
 
