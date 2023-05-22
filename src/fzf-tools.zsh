@@ -1,54 +1,29 @@
 # file: fzf-tools.xtx
 
-# Define the accept-line widget function
-function fzf_command_widget() {
+function fzf-command-widget() {
     local full_command=$BUFFER
 
     case "$full_command" in
         ls*)
-            BUFFER="$full_command | fzf -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window right:50% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
         man*)
-            BUFFER="fzf_man $full_command"
+            BUFFER="fzf-man $full_command"
         ;;
         printenv* | env*)
-            BUFFER="$full_command | fzf -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
         set)
-            BUFFER="$full_command | fzf -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
         grep*)
-            BUFFER="$full_command | fzf -i -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf -i --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
         find*)
-            BUFFER="$full_command | fzf -i -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf -i --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
         'ps aux')
-            BUFFER="$full_command | fzf -m --cycle +s \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list'  \
-                --color bg:#222222,preview-bg:#333333"
+            BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333"
         ;;
     esac
     zle accept-line
@@ -56,114 +31,168 @@ function fzf_command_widget() {
     # $(clear)
 }
 
-# Bind the accept-line widget function to the Enter key
-zle -N fzf_command_widget
-bindkey '^M' fzf_command_widget
+zle -N fzf-command-widget
+bindkey '^M' fzf-command-widget
 
-function fzf_man() {
-    # $1 = the command (man). 
-    # $selected_command = the selected man page from the list of man pages.
+function fzf-man() {
     local selected_command
-    selected_command=$(
-        man -k . \
-        | awk '{print $1}' \
-        | sort \
-        | uniq \
-        | fzf -m --cycle \
-            --preview='echo {}' \
-            --preview-window down:10%
+    selected_command=$(man -k . | awk '{print $1}' | sort | uniq | fzf --multi --cycle --preview='echo {}' --preview-window down:10%
     )
 
     if [[ -n "$selected_command" ]]; then
-        man "$selected_command" \
-        | fzf -m --cycle --tac +s \
-            --preview='echo {}' \
-            --preview-window down:10% \
-            --layout='reverse-list'  \
-            --color bg:#222222,preview-bg:#333333
+        man "$selected_command" | fzf --multi --cycle --tac --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333
     fi
 }
 
-# Allows executing any command from history
-function fzf_run_cmd_from_history() {
+# I want to add --multi and try to select multiple commands 
+# and concatenate them together. 
+function fzf-run-cmd-from-history() {
     local selected_command
-    selected_command=$(
-        history \
-        | awk '{$1=""; print $0}' \
-        | awk '!x[$0]++' \
-        | fzf --cycle --tac +s --no-sort \
-            --preview 'echo {}' \
-            --preview-window down:10% \
-            --color bg:#222222,preview-bg:#333333 \
-    )
+    selected_command=$(history | awk '{$1=""; print $0}' | awk '!x[$0]++' | fzf --cycle --tac --no-sort --preview 'echo {}' --preview-window down:10% --color bg:#222222,preview-bg:#333333)
 
     if [[ -n "$selected_command" ]]; then
         eval "$selected_command"
     fi
 }
 
-#/////////////////////////////////////////////
-alias fzf_hist='fzf_run_cmd_from_history' #///
-#/////////////////////////////////////////////
+alias fzhist='fzf-run-cmd-from-history'
 
-function fuzzy_search_files_on_path() {
+function fzf-exec-scripts() {
+	local directory="$1"
+	shift
+	local file_exts=("$@")
+
+	if [[ -z "$directory" || "${#file_exts[@]}" -eq 0 ]]; then
+	    echo "Usage: fzf-exec-scripts <directory> <file_extension1> [<file_extension2> ...]"
+	    return 1
+	fi
+
+	local selected_scripts=()
+	local selected_script
+	selected_script=$(find "$directory" -type f \( -name "*.${file_exts[1]}" $(printf -- "-o -name '*.%s' " "${file_exts[@]:1}") \) | fzf --multi --cycle --tac --no-sort --preview='echo {}' --preview-window  down:10% --layout='reverse-list' --color  bg:#222222,preview-bg:#333333) && selected_scripts=("${(f)selected_script}")
+
+	if [[ "${#selected_scripts[@]}" -eq 0 ]]; then
+	    echo "No scripts selected."
+	    return
+	fi
+
+	for script in "${selected_scripts[@]}"; do
+	    chmod +x "$script"
+	    case "$script" in
+            *.sh)
+                bash "$script"
+            ;;
+            *.zsh)
+                zsh "$script"
+            ;;
+            *.bash)
+                bash "$script"
+            ;;
+		    *.js)
+		        node "$script"
+	        ;;
+		    *.py)
+			    python "$script"
+	        ;;
+	        *.rb)
+		        ruby "$script"
+	        ;;
+            *.rs)
+                filename=$(basename "${direcory}/${script}")
+                rustc "$script"
+                ./$filename
+            ;;
+		    *)	
+		        echo "Unsupported file extension: $script"
+		        return 1
+	        ;;
+	    esac
+	done
+}
+
+alias fzscripts='fzf-exec-scripts'
+
+function fzf-search-files-on-path() {
     local _path="$1"
-    find tree "$_path" -type f \
-    | fzf -i -m --cycle \
+    find tree "$_path" -type f | fzf -i --multi --cycle --preview='echo {}' --preview-window down:10% --color bg:#222222,preview-bg:#333333   
+}
+
+alias fzfop='fzf-search-files-on-path'
+
+function fzf-git-log() {
+    local selected_commit
+    selected_commit=$(\
+        git log --oneline | fzf --multi --no-sort --cycle \
+            --preview='echo {}' \
+            --preview-window down:10% \
+            --layout='reverse-list' \
+            --color bg:#222222,preview-bg:#333333 \
+    ) && git show "$selected_commit"
+}
+
+alias fzgl='fzf-git-log'
+
+function fzf-ag() {
+    local selected_file
+    selected_file=$(\
+        ag "$1" . | fzf \
+        --multi --no-sort --cycle \
         --preview='echo {}' \
         --preview-window down:10% \
-        --color bg:#222222,preview-bg:#333333   
+        --layout='reverse-list' \
+        --color bg:#222222,preview-bg:#333333 \
+    ) && $EDITOR "$selected_file"
 }
 
-#/////////////////////////////
-alias _fop='files_on_path' #///
-#/////////////////////////////
+alias fzag='fzf-ag'
 
-# Select a commit from git log using fzf.
-function fzf_git_log() {
-    local selected_commit
-    selected_commit=$(git log --oneline | fzf) && git show "$selected_commit"
-}
-
-alias _gl='fzf_git_log'
-
-# Search for patterns in files using ag (The Silver Searcher) and fzf.
-function fzf_ag() {
-    local selected_file
-    selected_file=$(ag "$1" . | fzf) && $EDITOR "$selected_file"
-}
-
-alias _ag='fzf_ag'
-
-# Select a Docker container from docker ps using fzf.
-function fzf_docker_ps() {
+function fzf-docker-ps() {
     local selected_container
-    selected_container=$(docker ps -a | fzf | awk '{print $1}') && docker logs "$selected_container"
+    selected_container=$(docker ps -a | fzf --multi --no-sort --cycle --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333 | awk '{print $1}') && docker logs "$selected_container"
 }
 
-alias _dps='fzf_docker_ps'
+alias fzdps='fzf-docker-ps'
 
-# Select an SSH host from known_hosts using fzf.
-function fzf_ssh() {
-    local selected_host
-    selected_host=$(cat ~/.ssh/known_hosts | cut -f 1 -d ' ' | sed -e s/,.*//g | uniq | fzf --preview 'echo {}') && ssh "$selected_host"
+function fzf-ssh() {
+        local selected_host
+        selected_host=$(\
+            cat ~/.ssh/known_hosts \
+            | cut -f 1 -d ' ' \
+            | sed -e s/,.*//g | uniq | fzf --multi --no-sort --cycle \
+                --preview='echo {}' \
+                --preview-window down:10% \
+                --layout='reverse-list' \
+                --color bg:#222222,preview-bg:#333333\
+        ) && ssh "$selected_host"
 }
 
-alias _ssh='fzf_ssh'
+alias fzssh='fzf-ssh'
 
-# Use grep interactively to search queries.
 function fzf-grep() {
     local selected_file
-    selected_file=$(grep -Ril "$1" . | fzf) && $EDITOR "$selected_file"
+    selected_file=$(grep -Ril "$1" . | fzf --multi --no-sort --cycle \
+        --preview='echo {}' \
+        --preview-window down:10% \
+        --layout='reverse-list' \
+        --color bg:#222222,preview-bg:#333333\
+    ) && $EDITOR "$selected_file"
 }
 
-# Search for files interactively.
+alias fzgrep='fzf-grep'
+
 function fzf-find() {
     local selected_file
-    selected_file=$(find . -type f | fzf) && $EDITOR "$selected_file"
+    selected_file=$(find . -type f | fzf --multi --no-sort --cycle \
+        --preview='echo {}' \
+        --preview-window down:10% \
+        --layout='reverse-list' \
+        --color bg:#222222,preview-bg:#333333\
+    ) && $EDITOR "$selected_file"
 }
 
-autoload -Uz fzf_run_cmd_from_history fzf_command_widget fzf_man fuzzy_search_files_on_path
+alias fzfind='fzf-find'
+
+autoload -Uz fzf-command-widget fzf-man fzf-run-cmd-from-history fzf-exec-scripts fuzzy-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
 
 # Initialize fzf
 if [[ -x "$(command -v fzf)" ]]; then

@@ -8,16 +8,17 @@
     * oh-my-zsh
     * stand-alone
 - [Documentation](#documentation)
-	* [fzf_command_widget](#fzf_command_widget)
-	* [fzf_man](#fzf_man)
-	* [fzf_run_command_from_history](#fzf_run_command_from_history)
-	* [fuzzy_search_files_on_path](#fuzzy_search_files_on_path)
-	* [fzf_git_log](#fzf_git_log)
-	* [fzf_ag](#fzf_ag)
-	* [fzf_docker_ps]($fzf_docker_ps)
-	* [fzf_ssh](#fzf_ssh)
-	* [fzf_grep](#fzf_grep)
-	* [fzf_find](#fzf_find)
+	* [fzf-command-widget](#fzf-command-widget)
+	* [fzf-man](#fzf-man)
+	* [fzf-run-command-from-history](#fzf-run-command-from-history)
+	* [fzf-search-files-on-path](#fzf-search-files-on-path)
+	* [fzf-exec-scripts](#fzf-exec-scripts)
+	* [fzf-git-log](#fzf-git-log)
+	* [fzf-ag](#fzf-ag)
+	* [fzf-docker-ps]($fzf-docker-ps)
+	* [fzf-ssh](#fzf-ssh)
+	* [fzf-grep](#fzf-grep)
+	* [fzf-find](#fzf-find)
 - [Contributing](#contributing)
 - [Security](#security)
 - [Contacts](#contacts)
@@ -70,73 +71,69 @@ source a/dir/of/your/choosing/fzf-tools.zsh
 ## [Documentation](#documentation)
 
 
-### [fzf_command_widget](#fzf_command_widget)
+### [fzf-command-widget](#fzf-command-widget)
 
 >**Defines the 'accept-line' widget function.**
 
-**Please note that the `fzf_command_widget` function modifies the behavior of the Enter key for specific commands, so it may not work as expected in all scenarios! Also, if you decide to add to this or change anything, be cautious when modifying the behavior of core commands like ls and man!**
+**Please note that the `fzf-command-widget` function modifies the behavior of the Enter key for specific commands, so it may not work as expected in all scenarios! Also, if you decide to add to this or change anything, be cautious when modifying the behavior of core commands like ls and man!**
 
 ```bash
-function  fzf_command_widget() {
-
+function  fzf-command-widget() {
 	local  full_command=$BUFFER
-
 	case  "$full_command"  in
 		ls*)
-			BUFFER="$full_command | fzf -m --cycle +s \
+			BUFFER="$full_command | fzf --multi --cycle --no-sort \
 				--preview='echo {}' \
-				--preview-window right:50% \
+				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
 		;;
 		man*)
-			BUFFER="fzf_man $full_command"
+			BUFFER="fzf-man $full_command"
 		;;
 		printenv* | env*)
-			BUFFER="$full_command | fzf -m --cycle +s \
+			BUFFER="$full_command | fzf --multi --cycle --no-sort \
 				--preview='echo {}' \
 				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
 		;;
 		set)
-			BUFFER="$full_command | fzf -m --cycle +s \
+			BUFFER="$full_command | fzf --multi --cycle --no-sort \
 				--preview='echo {}' \
 				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
 		;;
 		grep*)
-			BUFFER="$full_command | fzf -i -m --cycle +s \
+			BUFFER="$full_command | fzf -i --multi --cycle --no-sort \
 				--preview='echo {}' \
 				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
-			;;
-		find*)
-			BUFFER="$full_command | fzf -i -m --cycle +s \
+		;;
+		find*)	
+			BUFFER="$full_command | fzf -i --multi --cycle --no-sort \
 				--preview='echo {}' \
 				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
-			;;
+		;;
 		'ps aux')
-			BUFFER="$full_command | fzf -m --cycle +s \
+			BUFFER="$full_command | fzf --multi --cycle --no-sort \
 				--preview='echo {}' \
 				--preview-window down:10% \
 				--layout='reverse-list' \
 				--color bg:#222222,preview-bg:#333333"
 		;;
 	esac
-
 	zle  accept-line
-
 	# Uncomment if the long command left over on the previous prompt bothers you.
 	# $(clear)
 }
 ```
 
-The `fzf_command_widget` function is designed to handle the behavior when the enter key is pressed. It takes the entire command line entered by the user and stores it in a variable called `$full_command`. The case statement then checks for different commands and prefixes the existing command with the required options, arguments, and flags, before piping it through `fzf`.
+The `fzf-command-widget` function is designed to handle the behavior when the enter key is pressed. It takes the entire command line entered by the user and stores it in a variable called `$full_command`. The case statement then checks for different commands and prefixes the existing command with the required options, arguments, and flags, before piping it through `fzf`.
 For example, when the user enters `ls -la /path/to/directory` and presses `Enter(^M)`, the `ls` command with options and arguments will be executed as `ls --color=auto -la /path/to/directory | fzf...`
 Similarly, other commands like `ls`, `man`, `printenv` (including `env` as an alternative), `set`, `grep`, `find` and `ps aux` will be processed with their respective options, arguments, and flags.
 Please keep in mind that this approach will pass the entire command line through fzf, including options, arguments, and flags. However, it does not perform in-depth parsing or validation of the command structure, so the behavior and correctness of the resulting command are dependent on the proper usage of options and arguments. Due to this, entering invalid commands may have unexpected results. If you're not sure about a commands options and flags you can always consult the man pages. 
@@ -144,7 +141,7 @@ Please keep in mind that this approach will pass the entire command line through
  - After the command line is stored in `$full_command` the `case` statement checks if the command you entered is either `ls`, `man`, `printenv`, `env`, `grep`, `find`, `set` or `ps aux`.
  - For `ls*`, the `BUFFER` is modified to the following command, which pipes the output of `ls` through `fzf`.
 ```bash 
-	 BUFFER="$full_command | fzf -m --cycle +s \
+	BUFFER="$full_command | fzf --multi --cycle --no-sort \
 			--preview='echo {}' \
 			--preview-window right:50% \
 			--layout='reverse-list' \
@@ -152,11 +149,11 @@ Please keep in mind that this approach will pass the entire command line through
 ```
  - For `man`, the `BUFFER` is modified to `fzf_man $full_command` which is called to pipe the output through `fzf` giving you a list of the manuals to choose from.
 ```bash
-	BUFFER="fzf_man $full_command"
+	BUFFER="fzf-man $full_command"
 ```
  - For `printenv* | env*`, the `BUFFER` is set to the following command, which pipes the output of `printenv | env` through `fzf`.
 ```bash
-	BUFFER="$full_command | fzf -m --cycle +s \
+	BUFFER="$full_command | fzf --multi --cycle --no-sort \
 			--preview='echo {}' \
 			--preview-window down:10% \
 			--layout='reverse-list' \
@@ -164,65 +161,63 @@ Please keep in mind that this approach will pass the entire command line through
 ```
  - For `grep*`, the `BUFFER` is set to the following command, which sets up `grep` to search and pipe the output through `fzf`.
 ```bash
-	BUFFER="$full_command | fzf -i -m --cycle +s \
-				--preview='echo {}' \
-				--preview-window down:10% \
-				--layout='reverse-list' \
-				--color bg:#222222,preview-bg:#333333"
+	BUFFER="$full_command | fzf -i --multi --cycle --no-sort \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333"
 ```
  - For `find*`, the `BUFFER` is set to the following command, which executes`find*` and pipes the output through `fzf`.
 ```bash
-	BUFFER="$full_command | fzf -i -m --cycle +s \
-				--preview='echo {}' \
-				--preview-window down:10% \
-				--layout='reverse-list' \
-				--color bg:#222222,preview-bg:#333333"
+	BUFFER="$full_command | fzf -i --multi --cycle --no-sort \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333"
 ```
  - For `ps aux` the `BUFFER` is set to the following command, which executes `ps aux*` and pipes the output through `fzf`.
 ```bash
-	BUFFER="$full_command | fzf -m --cycle +s \
-				--preview='echo {}' \
-				--preview-window down:10% \
-				--layout='reverse-list' \
-				--color bg:#222222,preview-bg:#333333"
+	BUFFER="$full_command | fzf --multi --cycle --no-sort \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333"
 ```
  - The `zle accept-line` command accepts the modified command line and executes it.
  ---
 Next we have to bind the `accept-line` widget function to the `Enter` key:
 
 ```bash
-zle -N fzf_command_widget
-bindkey '^M' fzf_command_widget
+zle -N fzf-command-widget
+bindkey '^M' fzf-command-widget
 ```
 
- -  The `zle -N fzf_command_widget` line creates a new Zsh widget from the `fzf_command_widget` function.
- -  The `bindkey '^M' fzf_command_widget` line binds the new widget to the Enter key (`^M`).
+ -  The `zle -N fzf-command-widget` line creates a new zsh widget from the `fzf_command_widget` function.
+ -  The `bindkey '^M' fzf-command-widget` line binds the new widget to the Enter key (`^M`).
 
 My original approach for detecting specific commands like `ls` and `man` involved using the `precmd` hook which is a function defined by `zsh` that gets invoked before each prompt, so essentially every time the user presses the `Enter key (^M)`, but this wasn't straight forward enough. I found myself tinkering with code more than progressing, so I decided to just create a *widget* and bind it to the `Enter key (^M)`  
 
 ------
 
-### [fzf_man](#fzf_man)
+### [fzf-man](#fzf-man)
 
->**The `fzf_man` function is called by the `fzf_command_widget` function when it detects that the user has entered the `man` command.**
+>**The `fzf-man` function is called by the `fzf-command-widget` function when it detects that the user has entered the `man`command and not meant to be called externally.**
 
 ```bash
-function  fzf_man() {
-	# $1 = the command (man).
-	# $selected_command = the selected man page from the list of man pages.
+function  fzf-man() {
 	local  selected_command
 	selected_command=$(
 		man  -k . \
 		|  awk '{print $1}' \
 		|  sort  \
 		|  uniq  \
-		|  fzf  -m  --cycle  \
+		|  fzf  --multi  --cycle  \
 			--preview='echo {}' \
 			--preview-window down:10%
 	)
 	if [[ -n  "$selected_command" ]]; then
 		man  "$selected_command"  \
-			|  fzf  -m  --cycle  --tac  +s  \
+			|  fzf  --multi  --cycle  --tac  --no-sort  \
 				--preview='echo {}'  \
 				--preview-window  down:10%  \
 				--layout='reverse-list'  \
@@ -231,18 +226,18 @@ function  fzf_man() {
 }
 ```
 
- - If the command retrieved in `fzf_command_widget `is `man`, the `fzf_man` function is called.
- - The `fzf_man` function runs the `man -k` . command to retrieve available manual pages, then extracts the first column (command names) using `awk`, removes duplicates using `sort` and `uniq`, and finally pipes the output through `fzf`.
+ - If the command retrieved in `fzf-command-widget `is `man`, the `fzf-man` function is called.
+ - The `fzf-man` function runs the `man -k` . command to retrieve available manual pages, then extracts the first column (command names) using `awk`, removes duplicates using `sort` and `uniq`, and finally pipes the output through `fzf`.
  - If a command is selected from fzf, it is passed to the man command and piped through `fzf` again to display the corresponding manual page through fuzzy finder for easy searching through the text.
  - The `--tac` flag on the second pipe through to `fzf` is required to display sentences in a legible manner. Without the `--tac` all of the man pages text is displayed backwards. The only downside to `--tac` is that the man pages will be displayed bottom up, so you will start at the bottom and scroll up to reach the beginning. Removing `--tac` fixes this, but then reverses the text as previously mentioned. This behavior is because of `fzf`. To me the benefits of `fzf` outweigh the slight nuisance of having to start at the bottom though.
  - Adding `--layout='reverse-list'`  helps with the scrolling. If a man page is selected the prompt will be displayed at the bottom and this also allows scrolling in a more familiar manner, from top to bottom as well.  
 ---
 
-### [fzf_run_command_from_history](#fzf_run_command_from_history)
->**Allows searching for and executing a command from your command history using fuzzy finder.**
+### [fzf-run-command-from-history](#fzf-run-command-from-history)
+>**Allows searching for and executing a command from your command history interactively using fzf.**
 
 ```bash
-function  fzf_run_cmd_from_history() {
+function  fzf-run-cmd-from-history() {
 	local  selected_command
 	selected_command=$(
 		history  \
@@ -258,7 +253,7 @@ function  fzf_run_cmd_from_history() {
 	fi
 }
 
-alias  fzf_hist='fzf_run_cmd_from_history'
+alias  fzhist='fzf-run-cmd-from-history'
 ```
  - The `history` command gets the command history of the current session.
  - The first `awk` command removes the line numbers from the history output in order to eval the command down the line.
@@ -271,15 +266,92 @@ alias  fzf_hist='fzf_run_cmd_from_history'
  -  The selected command is then stored in the `selected_command` variable.
  - Finally it checks if a command is selected (*i.e., the selected_command variable is not empty*), and if so it is evaluated using eval.
 ---
-Note: *Choosing a previous `cd` command from your history may fail to execute as the `fzf_run_command_from_hisory` function doesn't take into account your current position in the directory stack, so if you aren't in the same position that you were originally in when executing the `cd some-dir` command from your history it will fail giving you the following error:
+Note: *Choosing a previous `cd` command from your history may fail to execute as the `fzf-run-command-from-hisory` function doesn't take into account your current position in the directory stack, so if you aren't in the same position that you were originally in when executing the `cd some-dir` command from your history it will fail giving you the following error:
 `cd: no such file or directory: some-dir`
 
 ------
 
-### [fuzzy_search_files_on_path](#fuzzy_search_files_on_path)
-> **Search for files on a given path.**
+### [fzf-exec-scripts](#fzf-exec-scripts)
+>**This command will allow you to search for a script/s within the desired directory and its subdirectories, allowing you to interactively select and execute the desired script/s with their respective interpreters.
+
+**
 ```bash
-function  fuzzy_search_files_on_path() {
+function fzf-exec-scripts() {
+	local directory="$1"
+	shift
+	local file_exts=("$@")
+
+	if [[ -z "$directory" || "${#file_exts[@]}" -eq 0 ]]; then
+	    echo "Usage: fzf-exec-scripts <directory> <file_extension1> [<file_extension2> ...]"
+	    return 1
+	fi
+
+	local selected_scripts=()
+	local selected_script
+	selected_script=$(find "$directory" -type f \( -name "*.${file_exts[1]}" $(printf -- "-o -name '*.%s' " "${file_exts[@]:1}") \) \
+		| fzf --multi -m --cycle --tac +s  \
+				--preview='echo {}'  \
+				--preview-window  down:10%  \
+				--layout='reverse-list'  \
+				--color  bg:#222222,preview-bg:#333333) && selected_scripts=("${(f)selected_script}")
+
+	if [[ "${#selected_scripts[@]}" -eq 0 ]]; then
+	    echo "No scripts selected."
+	    return
+	fi
+
+	for script in "${selected_scripts[@]}"; do
+	    chmod +x "$script"
+	    case "$script" in
+		    *.sh)
+				bash  "$script"
+			;;
+			*.zsh)
+				zsh  "$script"
+			;; 
+		    *.js)
+		        node "$script"
+	        ;;
+		    *.py)
+			    python "$script"
+	        ;;
+	        *.rb)
+		        ruby "$script"
+	        ;;
+	        *.rs)
+				filename=$(basename "${direcory}/${script}")
+				rustc  "$script"
+				./$filename
+			;;
+		    *)	
+		        echo "Unsupported file extension: $script"
+		        return 1
+	        ;;
+	    esac
+	done
+}
+
+alias fzscripts='fzf-exec-scripts'
+```
+- The `fzf-exec-scripts` function accepts a directory as the first parameter and multiple file extensions as subsequent parameters. The `shift` command is used to remove the first parameter (`$1`) from the list, so that the remaining parameters represent the file extensions.
+- The function checks if both the *directory* and file *extensions* are provided. If either of them is missing, it displays a usage message and returns with an '*unsupported file extension*' error.
+- The `find` command is then used to search for files with the specified file extensions in the specified directory. The `-name` option in `find` is used with logical OR (`-o`) to match files with any of the specified extensions. 
+- The resulting file paths are then piped through `fzf` for interactive selection.
+- After selecting the scripts with `fzf` and storing them in the `$selected_scripts` array, we check if any scripts were selected `("${#selected_scripts[@]}" -eq 0)`. If no scripts were selected, we display a message and return.
+- If one or more scripts were selected, we iterate over the `$selected_scripts` array and execute each script individually. The execute permission is set on each script before executing it.
+- The `case` statement determines the file extension of each script and executes it with the corresponding interpreter.
+
+To use `fzf-exec-scripts` supply it with the desired directory of your script/s and file extensions as parameters. When providing a file extension/s be sure to leave out the prepended '`.`' on the extension/s as you only need the extension name by it self  (e.g. `.sh` -> `sh` | | `.js` -> `js`) .  For example:
+```bash
+fzf-exec-scripts /path/to/scripts/ sh js py rb 
+```
+
+---
+
+### [fzf-search-files-on-path](#fzf-search-files-on-path)
+> **Interactively search for files on a given path.**
+```bash
+function  fzf-search-files-on-path() {
 	local  _path="$1"
 	find  tree  "$_path"  -type  f  \
 		|  fzf  -i -m  --cycle  \
@@ -288,84 +360,110 @@ function  fuzzy_search_files_on_path() {
 			--color  bg:#222222,preview-bg:#333333
 }
 
-alias  _fop='files_on_path'
+alias  fzfop='fzf-search-files-on-path'
 ```
 - First the path is stored in the local `$_path` variable.
 - The `find` command is then used to search the given path for all things of type `file` and pipes the results through `fzf`. 
 ---
-### [fzf_git_log](#fzf_git_log)
+### [fzf-git-log](#fzf-git-log)
 > **Select a commit from git log using fzf.**
 ```bash
-function  fzf_git_log() {
+function  fzf-git-log() {
 	local  selected_commit
-	selected_commit=$(
-		git log --oneline  |  fzf ) \
-		&& git  show  "$selected_commit"
+	selected_commit=$(\
+		git log --oneline  |  fzf  --multi  --no-sort  --cycle  \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333 \
+	) && git  show  "$selected_commit"
 }
 
-alias fzfgl='fzf_git_log'
+alias fzgl='fzf-git-log'
 ```
   - With this function, you can select a commit from the git log interactively. 
   - It executes `git log --oneline` to retrieve a concise log of commits, and pipes the output through `fzf`. 
   - Once you choose a commit, it displays the full details of that commit using `git show`.
 ---
 
-### [fzf_ag](#fzf_ag)
+### [fzf-ag](#fzf-ag)
 > Search for patterns in files using ag (The Silver Searcher) and fzf.
 ```bash
-function  fzf_ag() {
+function  fzf-ag() {
 	local  selected_file
-	selected_file=$(ag "$1" . |  fzf) && $EDITOR  "$selected_file"
+	selected_file=$(\
+		ag "$1" . |  fzf  \
+			--multi  --no-sort  --cycle  \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333\
+	) && $EDITOR  "$selected_file"
 }
 
-alias _ag='fzf_ag'
+alias fzag='fzf-ag'
 ```
-  - This function is similar to `fzf_grep` but uses `ag` (The Silver Searcher) instead of `grep`. 
+  - This function is similar to `fzf-grep` but uses `ag` (The Silver Searcher) instead of `grep`. 
   - It searches for patterns in files using `ag "$1"`, which searches for the specified pattern `($1)` in the current directory. 
   - The search results are then piped through `fzf`, and once you select a file, it opens in your default editor.
 ---
 
-### [fzf_docker_ps](#fzf_docker_ps)
+### [fzf-docker-ps](#fzf-docker-ps)
 > **Select a Docker container from docker ps interactively using fzf**.
 ```bash
-function  fzf_docker_ps() {
+function  fzf-docker-ps() {
 	local  selected_container
 	selected_container=$(docker ps -a  |  fzf  \
-	|  awk '{print $1}') \
-	&& docker  logs  "$selected_container"
+		--multi  --no-sort  --cycle  \
+		--preview='echo {}' \
+		--layout='reverse-list' \
+		--color bg:#222222,preview-bg:#333333 \ 
+		|  awk '{print $1}') \
+		&& docker  logs  "$selected_container"
 }
 
-alias _dps='fzf_docker_ps'
+alias fzdps='fzf-docker-ps'
 ```
   - With this function, you can select a Docker container from docker ps interactively.
   -  It executes `docker ps -a` to list all Docker containers and pipes the output through `fzf`. 
   - Once you select a container, it displays the logs of that container using `docker logs`.
 ---
 
-### [fzf_ssh](#fzf_ssh)
+### [fzf-ssh](#fzf-ssh)
 > **Select an SSH host from known_hosts using fzf.**
 ```bash
-function  fzf_ssh() {
+function  fzf-ssh() {
 	local  selected_host
-	selected_host=$(cat ~/.ssh/known_hosts \
-		|  cut  -f  1  -d ' ' |  sed  -e s/,.*//g \
-		|  uniq  |  fzf  --preview 'echo {}') \
-	&& ssh  "$selected_host"
+	selected_host=$(\
+		cat ~/.ssh/known_hosts \
+		|  cut  -f  1  -d ' ' \
+		|  sed  -e s/,.*//g |  uniq  |  fzf  --multi  --no-sort  --cycle  \
+			--preview='echo {}' \
+			--preview-window down:10% \
+			--layout='reverse-list' \
+			--color bg:#222222,preview-bg:#333333\
+	) && ssh  "$selected_host"
 }
-
-alias _ssh='fzf_ssh'
+alias fzssh='fzf-ssh'
 ```
 - This function enables you to select an SSH host from your known_hosts file interactively. 
-- It uses  reads the known_hosts file, extracts the hostnames, removes any additional information, and presents them in fzf for selection. 
-- Once you choose a host, it initiates an SSH connection using ssh.
+- It uses `cat`, `cut`, `sed` and `uniq` to read the known_hosts file, extract the hostnames, remove any additional information, and presents them in fzf for selection. 
+- Once you choose a host, it initiates an SSH connection using `ssh`.
 ---
-### [fzf_grep](#fzf_grep)
+### [fzf-grep](#fzf-grep)
 > **Interactively search for patterns in files using grep and fzf.**
 ```bash
 function  fzf-grep() {
 	local  selected_file
-	selected_file=$(grep  -Ril "$1" . |  fzf) && $EDITOR  "$selected_file"
+	selected_file=$(grep  -Ril "$1" . |  fzf  --multi  --no-sort  --cycle  \
+		--preview='echo {}' \
+		--preview-window down:10% \
+		--layout='reverse-list' \
+		--color bg:#222222,preview-bg:#333333\
+	) && $EDITOR  "$selected_file"
 }
+
+alias fzgrep='fzf-grep'
 ```
   - This function combines `grep` and `fzf` to search for patterns in files interactively. 
   - It uses the `grep -Ril` command to search for the specified pattern `($1)` recursively in the current directory and its subdirectories. 
@@ -373,20 +471,28 @@ function  fzf-grep() {
   - Once you select a file, it opens in your default editor.
 ---
 
-### [fzf_find](#fzf_find)
+### [fzf-find](#fzf-find)
 >**Search for files using find and fzf.**
 ```bash
 function  fzf-find() {
 	local  selected_file
-	selected_file=$(find . -type f |  fzf) && $EDITOR  "$selected_file"
+	selected_file=$(find . -type f |  fzf  --multi  --no-sort  --cycle  \
+		--preview='echo {}' \
+		--preview-window down:10% \
+		--layout='reverse-list' \
+		--color bg:#222222,preview-bg:#333333\
+	) && $EDITOR  "$selected_file"
 }
+
+alias fzfind='fzf-find'
 ```
-  - This function allows you to search for files using the `find` command. It pipes the output of `find . -type f` (which searches for files in the current directory and its subdirectories) through `fzf` for interactive selection. Once you select a file, it opens in your default editor `($EDITOR)`.
+  - This function allows you to search for files using the `find` command. It pipes the output of `find . -type f` (which searches for files in the current directory and its subdirectories) through `fzf` for interactive selection. 
+  - Once you select a file, it opens in your default editor `($EDITOR)`.
 ---
 
 
 ```bash
-autoload  -Uz  fzf_run_cmd_from_history  fzf_command_widget  fzf_man  fuzzy_search_files_on_path
+autoload  -Uz  fzf-command-widget  fzf-man fzf-run-cmd-from-history fzf-exec-scripts  fuzzy-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
 ```
 The `autoload -Uz` command ensures that the functions of this plugin are lazily loaded when they are invoked.
 

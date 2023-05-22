@@ -1,0 +1,9 @@
+
+*.swp
+*.tmp
+*.txt
+*.sh
+*.js
+
+temp/
+dev/
