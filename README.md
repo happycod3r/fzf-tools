@@ -27,7 +27,7 @@
 
 The fzf-tools plugin provides functions, key-bindings, and aliases that aim to integrate **fuzzy finder** capabilities into the command line as a default output for certain commands such as `man`, `ls`, `find`, `printenv`, `alias` and others.
 My aim was to make it so that **fzf** would work without having to manually pipe commands through it, write aliases or explicitly call functions. 
-In other words I wanted to avoid doing this:
+In other words I wanted to avoid doing the following each time:
 
 ```bash
 man -k . | awk '{print $1}' | sort | uniq | fzf | xargs -r man
@@ -40,7 +40,7 @@ alias l="ls --color=auto | fzf"
 alias m="man -k . | awk '{print $1}' | sort | uniq | fzf | xargs -r man"
 ```
 
-There's nothing wrong with doing any of these, but I personally feel that fzf makes life so much easier and is actually such a game changer. If you never used it before it would make a great default feature for certain commands such as these. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If you have suggestions, ideas etc. consult the [Contacts](#contacts) section.
+There's nothing wrong with doing any of these, but I personally feel that fzf makes life much easier and is actually a game changer for your work flow if you never used it before. I felt that it would just make a great default feature for certain commands such as `ls` or `man`. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If you have suggestions, ideas etc. consult the [Contacts](#contacts) section.
 
 
 ## [Usage](#usage)
