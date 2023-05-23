@@ -3,25 +3,28 @@
 
 ## [Table Of Contents](#table-of-contents)
 
-- [About](#about)
-- [Usage](#usage)
-    * oh-my-zsh
-    * stand-alone
-- [Documentation](#documentation)
-	* [fzf-command-widget](#fzf-command-widget)
-	* [fzf-man](#fzf-man)
-	* [fzf-run-command-from-history](#fzf-run-command-from-history)
-	* [fzf-search-files-on-path](#fzf-search-files-on-path)
-	* [fzf-exec-scripts](#fzf-exec-scripts)
-	* [fzf-git-log](#fzf-git-log)
-	* [fzf-ag](#fzf-ag)
-	* [fzf-docker-ps]($fzf-docker-ps)
-	* [fzf-ssh](#fzf-ssh)
-	* [fzf-grep](#fzf-grep)
-	* [fzf-find](#fzf-find)
-- [Contributing](#contributing)
-- [Security](#security)
-- [Contacts](#contacts)
+- [fzf-tools.zsh](#fzf-toolszsh)
+  - [Table Of Contents](#table-of-contents)
+  - [About](#about)
+  - [Usage](#usage)
+    - [oh-my-zsh:](#oh-my-zsh)
+    - [stand-alone:](#stand-alone)
+  - [Documentation](#documentation)
+    - [fzf-command-widget](#fzf-command-widget)
+    - [fzf-man](#fzf-man)
+    - [fzf-run-command-from-history](#fzf-run-command-from-history)
+    - [fzf-exec-scripts](#fzf-exec-scripts)
+    - [fzf-search-files-on-path](#fzf-search-files-on-path)
+    - [fzf-git-log](#fzf-git-log)
+    - [fzf-ag](#fzf-ag)
+    - [fzf-docker-ps](#fzf-docker-ps)
+    - [fzf-ssh](#fzf-ssh)
+    - [fzf-grep](#fzf-grep)
+    - [fzf-find](#fzf-find)
+  - [Contributing](#contributing)
+  - [Security](#security)
+    - [Reporting a vulnerability or bug?](#reporting-a-vulnerability-or-bug)
+  - [Contacts](#contacts)
 
 
 ## [About](#about)
@@ -433,8 +436,8 @@ alias fzdps='fzf-docker-ps'
 ### [fzf-ssh](#fzf-ssh)
 > **Select an SSH host from known_hosts using fzf.**
 ```bash
-function  fzf-ssh() {
-	local  selected_host
+function fzf-ssh() {
+	local selected_host
 	selected_host=$(\
 		cat ~/.ssh/known_hosts \
 		|  cut  -f  1  -d ' ' \
@@ -493,7 +496,7 @@ alias fzfind='fzf-find'
 
 
 ```bash
-autoload  -Uz  fzf-command-widget  fzf-man fzf-run-cmd-from-history fzf-exec-scripts  fuzzy-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
+autoload -Uz fzf-command-widget fzf-man fzf-run-cmd-from-history fzf-exec-scripts fzf-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
 ```
 The `autoload -Uz` command ensures that the functions of this plugin are lazily loaded when they are invoked.
 

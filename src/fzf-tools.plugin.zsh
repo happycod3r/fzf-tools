@@ -234,7 +234,7 @@ function fzf-find() {
 
 alias fzfind='fzf-find'
 
-autoload -Uz fzf-command-widget fzf-man fzf-run-cmd-from-history fzf-exec-scripts fuzzy-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
+autoload -Uz fzf-command-widget fzf-man fzf-run-cmd-from-history fzf-exec-scripts fzf-search-files-on-path fzf-git-log fzf-ag fzf-docker-ps fzf-ssh fzf-grep fzf-find
 
 # Initialize fzf
 if [[ -x "$(command -v fzf)" ]]; then
