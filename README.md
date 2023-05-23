@@ -319,7 +319,7 @@ function fzf-exec-scripts() {
 		        ruby "$script"
 	        ;;
 	        *.rs)
-				filename=$(basename "${direcory}/${script}")
+				filename=$(basename "${directory}/${script}")
 				rustc  "$script"
 				./$filename
 			;;
@@ -340,6 +340,7 @@ alias fzscripts='fzf-exec-scripts'
 - After selecting the scripts with `fzf` and storing them in the `$selected_scripts` array, we check if any scripts were selected `("${#selected_scripts[@]}" -eq 0)`. If no scripts were selected, we display a message and return.
 - If one or more scripts were selected, we iterate over the `$selected_scripts` array and execute each script individually. The execute permission is set on each script before executing it.
 - The `case` statement determines the file extension of each script and executes it with the corresponding interpreter.
+- The default case of the the `case` statement lets the user know that the interpreter they need to run the selected script isn't installed and/or where to get it.
 
 To use `fzf-exec-scripts` supply it with the desired directory of your script/s and file extensions as parameters. When providing a file extension/s be sure to leave out the prepended '`.`' on the extension/s as you only need the extension name by it self  (e.g. `.sh` -> `sh` | | `.js` -> `js`) .  For example:
 ```bash
@@ -354,7 +355,7 @@ fzf-exec-scripts /path/to/scripts/ sh js py rb
 function  fzf-search-files-on-path() {
 	local  _path="$1"
 	find  tree  "$_path"  -type  f  \
-		|  fzf  -i -m  --cycle  \
+		|  fzf  -i --multim  --cycle  \
 			--preview='echo {}'  \
 			--preview-window  down:10%  \
 			--color  bg:#222222,preview-bg:#333333

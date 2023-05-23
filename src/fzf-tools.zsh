@@ -63,8 +63,8 @@ function fzf-exec-scripts() {
 	local file_exts=("$@")
 
 	if [[ -z "$directory" || "${#file_exts[@]}" -eq 0 ]]; then
-	    echo "Usage: fzf-exec-scripts <directory> <file_extension1> [<file_extension2> ...]"
-	    return 1
+        echo "Usage: fzf-exec-scripts <directory> <file_extension1> [<file_extension2> ...]"
+        return 1
 	fi
 
 	local selected_scripts=()
@@ -72,13 +72,13 @@ function fzf-exec-scripts() {
 	selected_script=$(find "$directory" -type f \( -name "*.${file_exts[1]}" $(printf -- "-o -name '*.%s' " "${file_exts[@]:1}") \) | fzf --multi --cycle --tac --no-sort --preview='echo {}' --preview-window  down:10% --layout='reverse-list' --color  bg:#222222,preview-bg:#333333) && selected_scripts=("${(f)selected_script}")
 
 	if [[ "${#selected_scripts[@]}" -eq 0 ]]; then
-	    echo "No scripts selected."
-	    return
+        echo "No scripts selected."
+        return
 	fi
 
 	for script in "${selected_scripts[@]}"; do
-	    chmod +x "$script"
-	    case "$script" in
+        chmod +x "$script"
+        case "$script" in
             *.sh)
                 bash "$script"
             ;;
@@ -89,24 +89,55 @@ function fzf-exec-scripts() {
                 bash "$script"
             ;;
 		    *.js)
-		        node "$script"
-	        ;;
+                node "$script"
+            ;;
 		    *.py)
-			    python "$script"
-	        ;;
+                python "$script"
+            ;;
 	        *.rb)
-		        ruby "$script"
-	        ;;
+                ruby "$script"
+            ;;
             *.rs)
-                filename=$(basename "${direcory}/${script}")
+                filename=$(basename "${directory}/${script}")
                 rustc "$script"
                 ./$filename
             ;;
 		    *)	
-		        echo "Unsupported file extension: $script"
-		        return 1
-	        ;;
-	    esac
+                filename=$(basename "${directory}/${script}")
+                extension="${filename##*.}"
+                if [[ "$extension" == "zsh" ]]; then
+                    cat >&2 <<'EOF'
+                    ZSH isn't installed on your system yet.
+                    Check out https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH for more information on how to install it.
+EOF
+                elif [[ "$extension" == "js" ]]; then
+                    cat >&2 <<'EOF'
+                    Node isn't installed on your system yet.
+                    You can install it directly using the following command:
+                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+                    Or check out https://nodejs.dev/en/ for more information.
+EOF
+                elif [[ "$extension" == "py" ]]; then
+                    cat >&2 <<'EOF'
+                    Python isn't installed on your system yet.
+                    Check out https://www.python.org/downloads/ for more information on how to install it.
+EOF
+                elif [[ "$extension" == "rb" ]]; then
+                    cat >&2 <<'EOF'
+                    Ruby isn't installed on your system yet.
+                    Check out https://www.ruby-lang.org/en/documentation/installation/ for more information on how to install it.
+EOF
+                elif [[ "$extension" == "rs" ]]; then
+                    cat >&2 <<'EOF'
+                    Rust isn't installed on your system yet.
+                    You can:
+                        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+                    or check out https://www.rust-lang.org/tools/install for more information.
+EOF
+                    return 1
+                fi
+            ;;
+        esac
 	done
 }
 
