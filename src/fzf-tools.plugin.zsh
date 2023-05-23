@@ -1,4 +1,15 @@
-# file: fzf-tools.plugin.zsh
+#########################################################################
+#///////////////////////////////////////////////////////////////////////#
+#//////                                                          ///////#
+#////// Name: FZF-Tools                                          ///////#
+#////// File: fzf-tools.plugin.zsh                               ///////#
+#////// Author: happycod3r                                       ///////#
+#////// Use: Integrates FZF into the command line and much more. ///////#
+#////// Check out the README.md for all of the documentation.    ///////#
+#//////                                                          ///////#       
+#///////////////////////////////////////////////////////////////////////#       
+#########################################################################
+
 
 function fzf-command-widget() {
     local full_command=$BUFFER
