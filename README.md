@@ -1,5 +1,5 @@
 ﻿# fzf-tools.zsh
->**These functions enhance your command-line workflow by providing interactive selection capabilities through fzf, allowing you to quickly find files, search through history, browse git commits, and more.**
+>**FZF-Tools is a Zsh plugin-framework aimed to enhance your command-line workflow by providing interactive selection capabilities through fzf, allowing you to quickly find files, search & run commands from history, run scripts of many supported types, browse git commits, and more.**
 
 ## [Table Of Contents](#table-of-contents)
 
@@ -275,9 +275,8 @@ Note: *Choosing a previous `cd` command from your history may fail to execute as
 ------
 
 ### [fzf-exec-scripts](#fzf-exec-scripts)
->**This command will allow you to search for a script/s within the desired directory and its subdirectories, allowing you to interactively select and execute the desired script/s with their respective interpreters.
+>**This command will allow you to search for a script/s within the desired directory and its subdirectories, allowing you to interactively select and execute the desired script/s with their respective interpreters. When more than one script is selected they are all executed consecutively one after the other.**
 
-**
 ```bash
 function fzf-exec-scripts() {
 	local directory="$1"
