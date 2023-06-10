@@ -4,7 +4,7 @@
 #////// Name: FZF-Tools                                          ///////#
 #////// File: fzf-tools.plugin.zsh                               ///////#
 #////// Author: happycod3r                                       ///////#
-#////// Use: Integrates FZF into the command line and much more. ///////#
+#////// Use: Integrates FZF into the command line.               ///////#
 #////// Check out the README.md for all of the documentation.    ///////#
 #//////                                                          ///////#       
 #///////////////////////////////////////////////////////////////////////#       
@@ -238,6 +238,9 @@ autoload -Uz fzf-command-widget fzf-man fzf-run-cmd-from-history fzf-exec-script
 
 # Initialize fzf
 if [[ -x "$(command -v fzf)" ]]; then
-    #export FZF_DEFAULT_COMMAND='ag -g ""'
-    #export FZF_DEFAULT_OPTS='-m --preview-window=up:40%:wrap'
+    # Change the defaults to whatever you would like here.
+    # You can also consult the fzf documentation for more options and 
+    # information @ https://github.com/junegunn/fzf
+    export FZF_DEFAULT_COMMAND='ag -g ""'
+    export FZF_DEFAULT_OPTS='-m --preview-window=up:40%:wrap'
 fi
