@@ -6,6 +6,7 @@
 - [fzf-tools.zsh](#fzf-toolszsh)
   - [Table Of Contents](#table-of-contents)
   - [About](#about)
+  - [Install](#install)
   - [Usage](#usage)
     - [oh-my-zsh:](#oh-my-zsh)
     - [stand-alone:](#stand-alone)
@@ -44,8 +45,23 @@ alias l="ls --color=auto | fzf"
 alias m="man -k . | awk '{print $1}' | sort | uniq | fzf | xargs -r man"
 ```
 
-There's nothing wrong with doing any of these, but I personally feel that fzf makes life much easier and is actually a game changer for your work flow if you never used it before. I felt that it would just make a great default feature for certain commands such as `ls` or `man`. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If you have suggestions, ideas etc. consult the [Contacts](#contacts) section.
+There's nothing wrong with doing any of these, but I personally feel that fzf makes a great default feature for certain commands such as `ls` or `man`. It took a lot of trial and error but I finally got everything working smoothly and functioning well. If you have suggestions, ideas etc. consult the [Contacts](#contacts) section.
 
+## [Install](#install)
+
+To download and install fzf-tools follow these steps
+
+1) Pick a directory to download it to:
+
+```bash
+cd where/I/want/
+```
+
+2) Paste the following line into your terminal and press the `Enter (^M)` key:
+
+```bash
+curl https://github.com/happycod3r/fzf-tools.git
+```
 
 ## [Usage](#usage)
 
