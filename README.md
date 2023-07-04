@@ -1,31 +1,32 @@
 ﻿# fzf-tools.zsh
 >**FZF-Tools is a Zsh plugin-framework aimed to enhance your command-line workflow by providing interactive selection capabilities through fzf, allowing you to quickly find files, search & run commands from history, run scripts of many supported types, browse git commits, and more.**
 
-## [Table Of Contents](#table-of-contents)
-
-- [fzf-tools.zsh](#fzf-toolszsh)
-  - [Table Of Contents](#table-of-contents)
-  - [About](#about)
-  - [Install](#install)
-  - [Usage](#usage)
-    - [oh-my-zsh:](#oh-my-zsh)
-    - [stand-alone:](#stand-alone)
-  - [Documentation](#documentation)
-    - [fzf-command-widget](#fzf-command-widget)
-    - [fzf-man](#fzf-man)
-    - [fzf-run-command-from-history](#fzf-run-command-from-history)
-    - [fzf-exec-scripts](#fzf-exec-scripts)
-    - [fzf-search-files-on-path](#fzf-search-files-on-path)
-    - [fzf-git-log](#fzf-git-log)
-    - [fzf-ag](#fzf-ag)
-    - [fzf-docker-ps](#fzf-docker-ps)
-    - [fzf-ssh](#fzf-ssh)
-    - [fzf-grep](#fzf-grep)
-    - [fzf-find](#fzf-find)
-  - [Contributing](#contributing)
-  - [Security](#security)
-    - [Reporting a vulnerability or bug?](#reporting-a-vulnerability-or-bug)
-  - [Contacts](#contacts)
+## [Table Of Contents](#toc)
+- [Table Of Contents](#toc)
+- [About](#about)
+- [Install](#install)
+  - [Manual Install](#manual_install)
+  - [Command Line Install](#command_line_install)
+    - [Using Git Clone](#git_clone)
+	- [Using Curl](#curl)
+- [Usage](#usage)
+  - [oh-my-zsh:](#ohmyzsh)
+  - [stand-alone:](#stand_alone)
+- [Documentation](#documentation)
+  - [fzf-command-widget](#fzf-command-widget)
+  - [fzf-man](#fzf-man)
+  - [fzf-run-command-from-history](#fzf-run-command-from-history)
+  - [fzf-exec-scripts](#fzf-exec-scripts)
+  - [fzf-search-files-on-path](#fzf-search-files-on-path)
+  - [fzf-git-log](#fzf-git-log)
+  - [fzf-ag](#fzf-ag)
+  - [fzf-docker-ps](#fzf-docker-ps)
+  - [fzf-ssh](#fzf-ssh)
+  - [fzf-grep](#fzf-grep)
+  - [fzf-find](#fzf-find)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Contacts](#contacts)
 
 
 ## [About](#about)
@@ -49,7 +50,30 @@ There's nothing wrong with doing any of these, but I personally feel that fzf ma
 
 ## [Install](#install)
 
-To download and install fzf-tools follow these steps
+To download and install fzf-tools choose an install method and follow the corresponding steps. Once
+fininshed jump to the [Usage](#usage) section.
+
+### [Manual Install](#manual_install)
+
+1. Download and place the ***zsh-toggles*** folder in a location of your choosing.
+2. Next source the script as shown in the [Usage](#usage) section.
+
+### [Command Line Install](#command_line_install)
+
+#### [Using Git Clone:](#git_clone)
+
+1) Open your terminal and navigate to the directory where you want to clone the repository: 
+
+```bash
+cd where/I/want/to/install
+```
+
+2) Next run the following command to clone the repository to the chosen location:
+```bash
+git clone https://github.com/happycod3r/fzf-tools.git
+```
+
+#### [Using Curl:](#curl)
 
 1) Pick a directory to download it to:
 
@@ -65,7 +89,7 @@ curl https://github.com/happycod3r/fzf-tools.git
 
 ## [Usage](#usage)
 
-### oh-my-zsh:
+### [oh-my-zsh:](#ohmyzsh)
 
 To use fzf-tools with oh-my-zsh follow these 2 steps:
 
@@ -76,7 +100,7 @@ To use fzf-tools with oh-my-zsh follow these 2 steps:
 plugins=(fzf-tools ...)
 ```
 
-### stand-alone:
+### [stand-alone:](#stand_alone)
 
 To use fzf-tools without a plugin manager like oh-my-zsh follow these steps:
 
