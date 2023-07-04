@@ -155,7 +155,7 @@ function  fzf-command-widget() {
 The `fzf-command-widget` function is designed to handle the behavior when the enter key is pressed. It takes the entire command line entered by the user and stores it in a variable called `$full_command`. The case statement then checks for different commands and prefixes the existing command with the required options, arguments, and flags, before piping it through `fzf`.
 For example, when the user enters `ls -la /path/to/directory` and presses `Enter(^M)`, the `ls` command with options and arguments will be executed as `ls --color=auto -la /path/to/directory | fzf...`
 Similarly, other commands like `ls`, `man`, `printenv` (including `env` as an alternative), `set`, `grep`, `find` and `ps aux` will be processed with their respective options, arguments, and flags.
-Please keep in mind that this approach will pass the entire command line through fzf, including options, arguments, and flags. However, it does not perform in-depth parsing or validation of the command structure, so the behavior and correctness of the resulting command are dependent on the proper usage of options and arguments. Due to this, entering invalid commands may have unexpected results. If you're not sure about a commands options and flags you can always consult the man pages. 
+Please keep in mind that this approach will pass the entire command line through fzf, including options, arguments, and flags. However, it does not perform in-depth parsing or validation of the command structure, so the behavior and correctness of the resulting command are dependent on the proper usage of options and arguments. Due to this, entering invalid commands may have unexpected results. If you're not sure about a command's options and flags you can always consult the man pages. 
 
  - After the command line is stored in `$full_command` the `case` statement checks if the command you entered is either `ls`, `man`, `printenv`, `env`, `grep`, `find`, `set` or `ps aux`.
  - For `ls*`, the `BUFFER` is modified to the following command, which pipes the output of `ls` through `fzf`.
@@ -278,7 +278,7 @@ alias  fzhist='fzf-run-cmd-from-history'
  - The first `awk` command removes the line numbers from the history output in order to eval the command down the line.
  - The second `awk` command removes duplicate lines from the output.
  - The output is then piped to `fzf` using the `+s` flag to enable the *multi-select* feature.
- - The `--cycle` flag enables you to easily cycle back to beginning of your history from the end or vice versa 
+ - The `--cycle` flag enables you to easily cycle back to beginning of your history from the end or vice versa. 
  - The `--no-sort` flag is also enabled to avoid sorting the results. This way you see your history in the correct order with the last command listed first.
  - The 	`--preview` option is used to show a preview of the selected command using the `echo` command. You can replace `'echo {}` with any other command you want to preview instead.
  - The `--preview-window` option sets the size and position of the preview window. It's at 10% to leave just enough room to display the currently selected command.
