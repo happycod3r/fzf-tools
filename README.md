@@ -1,5 +1,5 @@
 ﻿# fzf-tools.zsh
->**FZF-Tools is a Zsh plugin-framework aimed to enhance your command-line workflow by providing interactive selection capabilities through fzf, allowing you to quickly find files, search & run commands from history, run scripts of many supported types, browse git commits, and more.**
+>**FZF-Tools is a Zsh plugin aimed to enhance your command-line workflow by providing interactive selection capabilities through fzf, allowing you to quickly find files, search & run commands from history, run scripts of many supported types, browse git commits, and more.**
 
 ## [Table Of Contents](#toc)
 - [Table Of Contents](#toc)
