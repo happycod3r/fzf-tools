@@ -47,8 +47,7 @@ bindkey '^M' fzf-command-widget
 
 function fzf-man() {
     local selected_command
-    selected_command=$(man -k . | awk '{print $1}' | sort | uniq | fzf --multi --cycle --preview='echo {}' --preview-window down:10%
-    )
+    selected_command=$(man -k . | awk '{print $1}' | sort | uniq | fzf --multi --cycle --preview='echo {}' --preview-window down:10%)
 
     if [[ -n "$selected_command" ]]; then
         man "$selected_command" | fzf --multi --cycle --tac --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color bg:#222222,preview-bg:#333333
@@ -196,16 +195,16 @@ function fzf-docker-ps() {
 alias fzdps='fzf-docker-ps'
 
 function fzf-ssh() {
-        local selected_host
-        selected_host=$(\
-            cat ~/.ssh/known_hosts \
-            | cut -f 1 -d ' ' \
-            | sed -e s/,.*//g | uniq | fzf --multi --no-sort --cycle \
-                --preview='echo {}' \
-                --preview-window down:10% \
-                --layout='reverse-list' \
-                --color bg:#222222,preview-bg:#333333\
-        ) && ssh "$selected_host"
+    local selected_host
+    selected_host=$(\
+        cat ~/.ssh/known_hosts \
+        | cut -f 1 -d ' ' \
+        | sed -e s/,.*//g | uniq | fzf --multi --no-sort --cycle \
+            --preview='echo {}' \
+            --preview-window down:10% \
+            --layout='reverse-list' \
+            --color bg:#222222,preview-bg:#333333\
+    ) && ssh "$selected_host"
 }
 
 alias fzssh='fzf-ssh'
