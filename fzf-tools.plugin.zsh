@@ -15,22 +15,22 @@ function fzf-command-widget() {
     local full_command=$BUFFER
 
     case "$full_command" in
-        ls*)
+        ls^**--help*)
             BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color 'bg:#222222,preview-bg:#333333'"
         ;;
-        man*)
+        man^**(--help|-h)*)
             BUFFER="fzf-man $full_command"
         ;;
-        printenv* | env*)
+        printenv^**--help* | env^*--help)
             BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color 'bg:#222222,preview-bg:#333333'"
         ;;
         set)
             BUFFER="$full_command | fzf --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color 'bg:#222222,preview-bg:#333333'"
         ;;
-        grep*)
+        grep^**--help*)
             BUFFER="$full_command | fzf -i --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color 'bg:#222222,preview-bg:#333333'"
         ;;
-        find*)
+        find^**--help*)
             BUFFER="$full_command | fzf -i --multi --cycle --no-sort --preview='echo {}' --preview-window down:10% --layout='reverse-list' --color 'bg:#222222,preview-bg:#333333'"
         ;;
         'ps aux')
